@@ -68,7 +68,7 @@ This demonstrates the **Principle of Least Privilege**.
 
 AWS IAM was used to manage the identity and permissions required for the lab.
 
-### Resources created
+### Resources Created
 
 * **IAM User:** `iam-test-user`
 * **IAM Group:** `s3-readers`
@@ -159,7 +159,9 @@ s3:PutObject
 s3:DeleteObject
 ```
 
-### IAM Policy Structure
+---
+
+# 📄 IAM Policy Structure
 
 An IAM policy is a JSON document that defines permissions.
 
@@ -174,7 +176,7 @@ Resource
 Condition
 ```
 
-`Principal` is used in policies where a principal needs to be specified, such as resource-based policies. It is not required in every IAM policy.
+`Principal` is used when a policy needs to specify the principal, such as in resource-based policies. It is not required in every IAM policy.
 
 ### Important Policy Elements
 
@@ -198,7 +200,7 @@ Condition
 
 In this lab, the AWS CLI used IAM user credentials to authenticate the request.
 
-The following command was used to verify the identity:
+Command:
 
 ```bash
 aws sts get-caller-identity
@@ -215,8 +217,6 @@ iam-test-user
 ## Authorization
 
 **Authorization answers: "What are you allowed to do?"**
-
-After AWS identifies the IAM user, AWS evaluates the permissions available to that identity.
 
 In this lab:
 
@@ -408,7 +408,7 @@ No applicable Allow
 AccessDenied
 ```
 
-and:
+And:
 
 ```text
 s3:DeleteObject
@@ -521,7 +521,7 @@ This policy provides read-only access to Amazon S3.
 
 ## Allow and Deny
 
-AWS access is generally denied by default unless an applicable policy provides an Allow.
+AWS access is generally denied unless an applicable policy provides an `Allow`.
 
 An **explicit Deny overrides an Allow**.
 
@@ -597,27 +597,43 @@ aws s3 rm s3://sushma-iam-day1-test-2026/test.txt
 
 # 📸 Screenshots
 
-The following screenshots document the hands-on lab:
-
-### 1. IAM Group
+## 1. IAM Group
 
 Shows the `s3-readers` IAM group and its attached S3 read-only policy.
 
-### 2. IAM User
+![IAM Group](./01-iam-group.png)
+
+---
+
+## 2. IAM User
 
 Shows the `iam-test-user` IAM user and its group membership.
 
-### 3. S3 Read Access
+![IAM User](./02-iam-user.png)
+
+---
+
+## 3. S3 Read Access
 
 Shows successful access to list objects in the S3 bucket.
 
-### 4. S3 Upload Denied
+![S3 Read Success](./03-s3-read-success.png)
+
+---
+
+## 4. S3 Upload Denied
 
 Shows `AccessDenied` for the `s3:PutObject` operation.
 
-### 5. S3 Delete Denied
+![S3 Upload Denied](./04-s3-upload-denied.png)
+
+---
+
+## 5. S3 Delete Denied
 
 Shows `AccessDenied` for the `s3:DeleteObject` operation.
+
+![S3 Delete Denied](./05-s3-delete-denied.png)
 
 ---
 
