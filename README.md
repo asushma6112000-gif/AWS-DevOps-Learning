@@ -1,14 +1,14 @@
-i# AWS IAM Hands-On Lab – Day 01
+# AWS IAM Hands-On Lab – Day 01
 
 ## 📌 Project Overview
 
 This project is a hands-on AWS IAM lab created as part of my AWS DevOps learning journey.
 
-The objective of this lab was to understand how AWS Identity and Access Management (IAM) controls access to AWS resources using users, groups, and policies.
+The objective of this lab was to understand how **AWS Identity and Access Management (IAM)** controls access to AWS resources using **IAM users, groups, and policies**.
 
 I created an IAM user with read-only access to an Amazon S3 bucket and tested different S3 operations using the AWS CLI.
 
-The user was able to list and read S3 objects, but was not allowed to upload or delete objects.
+The user was able to list and read S3 objects but was not allowed to upload or delete objects.
 
 This demonstrates the **Principle of Least Privilege**.
 
@@ -17,35 +17,38 @@ This demonstrates the **Principle of Least Privilege**.
 ## 🏗️ Architecture / Permission Flow
 
 ```text
-                    AWS IAM
-                       |
-                       |
-                iam-test-user
-                       |
-                       ↓
-                 s3-readers
-                  IAM Group
-                       |
-                       ↓
-          AmazonS3ReadOnlyAccess
-                  IAM Policy
-                       |
-                       ↓
-               Amazon S3 Bucket
-        sushma-iam-day1-test-2026
-                       |
-          ┌────────────┼────────────┐
-          ↓            ↓            ↓
-       List/Read     Upload       Delete
-          ✅            ❌            ❌
-        Allowed       Denied       Denied
+                         AWS IAM
+                            │
+                            ↓
+                    iam-test-user
+                            │
+                            ↓
+                       s3-readers
+                       IAM Group
+                            │
+                            ↓
+                  AmazonS3ReadOnlyAccess
+                      IAM Policy
+                            │
+                            ↓
+                  Amazon S3 Bucket
+              sushma-iam-day1-test-2026
+                            │
+                 ┌──────────┼──────────┐
+                 ↓          ↓          ↓
+               List/Read   Upload     Delete
+                  ✅          ❌          ❌
+                Allowed     Denied     Denied
 ```
 
 ---
 
-## 🎯 Objectives
+# 🎯 Objectives
 
 * Understand AWS IAM fundamentals
+* Understand IAM users
+* Understand IAM groups
+* Understand IAM policies
 * Create an IAM user
 * Create an IAM group
 * Attach an IAM policy to a group
@@ -61,39 +64,51 @@ This demonstrates the **Principle of Least Privilege**.
 
 # ☁️ AWS Services Used
 
-### 1. AWS IAM
+## 1. AWS IAM
 
-Used to manage identities and permissions.
+AWS IAM was used to manage the identity and permissions required for the lab.
 
-Resources created:
+### Resources created
 
-* IAM User: `iam-test-user`
-* IAM Group: `s3-readers`
-* IAM Policy: `AmazonS3ReadOnlyAccess`
+* **IAM User:** `iam-test-user`
+* **IAM Group:** `s3-readers`
+* **IAM Policy:** `AmazonS3ReadOnlyAccess`
 
-### 2. Amazon S3
+---
 
-Used as the AWS resource on which IAM permissions were tested.
+## 2. Amazon S3
 
-S3 Bucket:
+Amazon S3 was used as the AWS resource on which IAM permissions were tested.
+
+### S3 Bucket
 
 ```text
 sushma-iam-day1-test-2026
 ```
 
-Test object:
+### Test Object
 
 ```text
 test.txt
 ```
 
-### 3. AWS CLI
+---
 
-Used to interact with AWS from the terminal and test IAM permissions.
+## 3. AWS CLI
 
-### 4. AWS STS
+The AWS CLI was used to authenticate and interact with AWS resources from the terminal.
 
-Used to verify which IAM identity was being used by the AWS CLI.
+---
+
+## 4. AWS STS
+
+AWS STS was used to verify the IAM identity currently being used by the AWS CLI.
+
+Command used:
+
+```bash
+aws sts get-caller-identity
+```
 
 ---
 
@@ -107,7 +122,9 @@ Created an IAM user:
 iam-test-user
 ```
 
-This user was used for testing AWS permissions through the AWS CLI.
+This user was used to test AWS permissions through the AWS CLI.
+
+An IAM user represents an identity within an AWS account that can authenticate and access AWS resources according to its permissions.
 
 ---
 
@@ -121,6 +138,8 @@ s3-readers
 
 The IAM user `iam-test-user` was added to this group.
 
+An IAM group is a collection of IAM users. Policies can be attached to the group, and users in the group receive those permissions.
+
 ---
 
 ## IAM Policy
@@ -133,11 +152,86 @@ AmazonS3ReadOnlyAccess
 
 This policy provides read-only access to Amazon S3.
 
-Therefore, the user can perform read/list operations but does not have permissions such as:
+Therefore, the IAM user could perform read/list operations but did not have permissions such as:
 
 ```text
 s3:PutObject
 s3:DeleteObject
+```
+
+### IAM Policy Structure
+
+An IAM policy is a JSON document that defines permissions.
+
+A typical IAM policy contains:
+
+```text
+Version
+Statement
+Effect
+Action
+Resource
+Condition
+```
+
+`Principal` is used in policies where a principal needs to be specified, such as resource-based policies. It is not required in every IAM policy.
+
+### Important Policy Elements
+
+| Element     | Meaning                                            |
+| ----------- | -------------------------------------------------- |
+| `Version`   | Specifies the policy language version              |
+| `Statement` | Contains one or more permission statements         |
+| `Effect`    | Specifies `Allow` or `Deny`                        |
+| `Action`    | Specifies the AWS API actions                      |
+| `Resource`  | Specifies the AWS resource                         |
+| `Condition` | Adds additional conditions to a permission         |
+| `Principal` | Specifies who is allowed or denied when applicable |
+
+---
+
+# 🔑 Authentication vs Authorization
+
+## Authentication
+
+**Authentication answers: "Who are you?"**
+
+In this lab, the AWS CLI used IAM user credentials to authenticate the request.
+
+The following command was used to verify the identity:
+
+```bash
+aws sts get-caller-identity
+```
+
+The output confirmed that the AWS CLI was using:
+
+```text
+iam-test-user
+```
+
+---
+
+## Authorization
+
+**Authorization answers: "What are you allowed to do?"**
+
+After AWS identifies the IAM user, AWS evaluates the permissions available to that identity.
+
+In this lab:
+
+```text
+List S3 objects → Allowed
+Read S3 objects → Allowed
+Upload objects  → Denied
+Delete objects  → Denied
+```
+
+Therefore:
+
+```text
+Authentication → Who are you?
+Authorization  → What can you do?
 ```
 
 ---
@@ -158,7 +252,7 @@ Region:
 ap-south-1
 ```
 
-The `ap-south-1` region represents the **Mumbai AWS Region**.
+`ap-south-1` is the AWS Mumbai Region.
 
 The AWS CLI was then used to test the permissions assigned to `iam-test-user`.
 
@@ -240,20 +334,18 @@ aws s3 cp upload-test.txt s3://sushma-iam-day1-test-2026/
 AccessDenied ❌
 ```
 
-The error indicated that the user was not authorized to perform:
+The request required the permission:
 
 ```text
 s3:PutObject
 ```
-
-### Why?
 
 The `AmazonS3ReadOnlyAccess` policy does not provide permission to upload objects.
 
 Therefore:
 
 ```text
-s3:PutObject → Denied ❌
+s3:PutObject → AccessDenied ❌
 ```
 
 ---
@@ -272,33 +364,61 @@ aws s3 rm s3://sushma-iam-day1-test-2026/test.txt
 AccessDenied ❌
 ```
 
-The error indicated that the user was not authorized to perform:
+The request required:
 
 ```text
 s3:DeleteObject
 ```
-
-### Why?
 
 The `AmazonS3ReadOnlyAccess` policy does not provide permission to delete objects.
 
 Therefore:
 
 ```text
-s3:DeleteObject → Denied ❌
+s3:DeleteObject → AccessDenied ❌
 ```
 
 ---
 
 # 📊 Permission Test Results
 
-| Operation           | Permission            | Result    |
-| ------------------- | --------------------- | --------- |
-| List S3 buckets     | `s3:ListAllMyBuckets` | ✅ Allowed |
-| List bucket objects | S3 List permission    | ✅ Allowed |
-| Read S3 objects     | S3 Read permission    | ✅ Allowed |
-| Upload object       | `s3:PutObject`        | ❌ Denied  |
-| Delete object       | `s3:DeleteObject`     | ❌ Denied  |
+| Operation           | Permission / API Action | Result    |
+| ------------------- | ----------------------- | --------- |
+| List S3 buckets     | `s3:ListAllMyBuckets`   | ✅ Allowed |
+| List bucket objects | `s3:ListBucket`         | ✅ Allowed |
+| Read S3 objects     | `s3:GetObject`          | ✅ Allowed |
+| Upload object       | `s3:PutObject`          | ❌ Denied  |
+| Delete object       | `s3:DeleteObject`       | ❌ Denied  |
+
+> **Note:** The exact permissions evaluated by AWS can vary depending on the AWS CLI command and the underlying API calls.
+
+---
+
+# 🚫 Understanding AccessDenied
+
+An `AccessDenied` error occurs when the IAM identity does not have sufficient permission for the requested AWS action.
+
+For example:
+
+```text
+s3:PutObject
+      ↓
+No applicable Allow
+      ↓
+AccessDenied
+```
+
+and:
+
+```text
+s3:DeleteObject
+      ↓
+No applicable Allow
+      ↓
+AccessDenied
+```
+
+In this lab, the user had read-only S3 permissions, so upload and delete operations were not permitted.
 
 ---
 
@@ -308,7 +428,7 @@ The **Principle of Least Privilege** means giving a user, application, or servic
 
 In this lab, the user only required read access to S3.
 
-Therefore, instead of giving the user full S3 permissions, I assigned:
+Instead of providing full S3 access, the following AWS managed policy was assigned:
 
 ```text
 AmazonS3ReadOnlyAccess
@@ -318,19 +438,19 @@ As a result:
 
 ```text
 Read/List → Allowed ✅
-Upload → Denied ❌
-Delete → Denied ❌
+Upload    → Denied ❌
+Delete    → Denied ❌
 ```
 
-This reduces unnecessary access and improves security.
+This reduces unnecessary permissions and improves security.
 
 ---
 
 # 📚 What I Learned
 
-Through this hands-on lab, I learned:
+## IAM Fundamentals
 
-### IAM Fundamentals
+I learned:
 
 * What AWS IAM is
 * IAM Users
@@ -338,49 +458,78 @@ Through this hands-on lab, I learned:
 * IAM Policies
 * Authentication
 * Authorization
-* Least Privilege
+* Allow and Deny
+* Implicit Deny
+* Principle of Least Privilege
 
-### IAM User
+---
 
-An IAM user represents an identity that can authenticate and interact with AWS resources according to its permissions.
+## IAM User
 
-### IAM Group
+An IAM user represents an identity within an AWS account that can authenticate and interact with AWS resources according to its permissions.
+
+---
+
+## IAM Group
 
 An IAM group is a collection of IAM users.
 
-Permissions can be assigned to the group so that users in the group inherit those permissions.
+Permissions can be assigned to the group, allowing its users to receive those permissions.
 
-### IAM Policy
+In this lab:
+
+```text
+iam-test-user
+      ↓
+s3-readers
+      ↓
+S3 Read Permissions
+```
+
+---
+
+## IAM Policy
 
 An IAM policy is a JSON-based document that defines permissions.
 
-It determines:
+It specifies what actions are allowed or denied on which resources and can optionally include conditions.
+
+Important policy elements include:
 
 ```text
+Version
+Statement
 Effect
 Action
 Resource
+Condition
 ```
 
-For example:
+---
 
-```text
-Allow → Read S3
-Deny/No permission → Upload
-Deny/No permission → Delete
-```
+## AWS Managed Policy
 
-### AWS Managed Policy
-
-I used:
+I used the AWS managed policy:
 
 ```text
 AmazonS3ReadOnlyAccess
 ```
 
-This is an AWS managed policy that provides read-only access to S3.
+This policy provides read-only access to Amazon S3.
 
-### AWS CLI
+---
+
+## Allow and Deny
+
+AWS access is generally denied by default unless an applicable policy provides an Allow.
+
+An **explicit Deny overrides an Allow**.
+
+In this lab, the upload and delete operations were denied because the user did not have the required permissions.
+
+---
+
+## AWS CLI
 
 I learned how to configure and use the AWS CLI:
 
@@ -388,23 +537,32 @@ I learned how to configure and use the AWS CLI:
 aws configure
 ```
 
-### AWS STS
+I also practiced AWS S3 commands such as:
 
-I learned how to verify the currently authenticated identity:
+```bash
+aws s3 ls
+```
+
+```bash
+aws s3 ls s3://bucket-name
+```
+
+```bash
+aws s3 cp file.txt s3://bucket-name/
+```
+
+```bash
+aws s3 rm s3://bucket-name/file.txt
+```
+
+---
+
+## AWS STS
+
+I learned how to verify the currently authenticated AWS identity using:
 
 ```bash
 aws sts get-caller-identity
-```
-
-### AccessDenied Troubleshooting
-
-I learned that an `AccessDenied` error can occur when the IAM identity does not have permission to perform a particular AWS action.
-
-For example:
-
-```text
-s3:PutObject → AccessDenied
-s3:DeleteObject → AccessDenied
 ```
 
 ---
@@ -443,31 +601,21 @@ The following screenshots document the hands-on lab:
 
 ### 1. IAM Group
 
-![IAM Group](01-iam-group.png)
-
 Shows the `s3-readers` IAM group and its attached S3 read-only policy.
 
 ### 2. IAM User
-
-![IAM User](02-iam-user.png)
 
 Shows the `iam-test-user` IAM user and its group membership.
 
 ### 3. S3 Read Access
 
-![S3 Read Success](03-s3-read-success.png)
-
 Shows successful access to list objects in the S3 bucket.
 
 ### 4. S3 Upload Denied
 
-![S3 Upload Denied](04-s3-upload-denied.png)
-
 Shows `AccessDenied` for the `s3:PutObject` operation.
 
 ### 5. S3 Delete Denied
-
-![S3 Delete Denied](05-s3-delete-denied.png)
 
 Shows `AccessDenied` for the `s3:DeleteObject` operation.
 
@@ -475,36 +623,40 @@ Shows `AccessDenied` for the `s3:DeleteObject` operation.
 
 # 💡 Key Takeaway
 
-This lab demonstrated how IAM can control access to AWS resources using users, groups, and policies.
+This lab demonstrated how AWS IAM controls access to AWS resources using **users, groups, and policies**.
 
-The `iam-test-user` received only S3 read permissions through the `s3-readers` group.
+The IAM user `iam-test-user` received S3 read permissions through the `s3-readers` group.
 
-As a result:
+The permission flow was:
 
 ```text
-                 iam-test-user
-                       |
-                       ↓
-                 s3-readers
-                       |
-                       ↓
-       AmazonS3ReadOnlyAccess
-                       |
-                       ↓
-                      S3
-             ┌─────────┴─────────┐
-             ↓                   ↓
-        Read/List             Modify
-           ✅                    ❌
+iam-test-user
+      ↓
+s3-readers
+      ↓
+AmazonS3ReadOnlyAccess
+      ↓
+S3
 ```
 
-This hands-on test demonstrates the importance of **least-privilege access control in AWS**.
+The resulting access was:
+
+```text
+                S3
+                 │
+        ┌────────┼────────┐
+        ↓        ↓        ↓
+      Read     Upload   Delete
+        ✅        ❌        ❌
+```
+
+This hands-on lab demonstrates the importance of **least-privilege access control in AWS**.
 
 ---
 
 # 🚀 Next Learning Topics
 
-After completing this IAM lab, the next IAM topics I will study are:
+After completing this IAM Day 1 lab, the next IAM topics are:
 
 * IAM Policy Types
 * Identity-Based Policies
@@ -524,10 +676,11 @@ After completing this IAM lab, the next IAM topics I will study are:
 * Service Control Policies (SCPs)
 * Cross-Account IAM Roles
 * IAM Troubleshooting
+* OIDC and GitHub Actions
 
 ---
 
-## 👩‍💻 Project Status
+# 👩‍💻 Project Status
 
 **Status:** Completed ✅
 
@@ -535,7 +688,7 @@ After completing this IAM lab, the next IAM topics I will study are:
 
 **Topic:** AWS IAM
 
-**Hands-on:** IAM + S3 + AWS CLI
+**Hands-on:** IAM + S3 + AWS CLI + STS
 
 **Key Security Concept:** Principle of Least Privilege
 
