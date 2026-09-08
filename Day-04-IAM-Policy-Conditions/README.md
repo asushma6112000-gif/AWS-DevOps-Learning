@@ -1,4 +1,4 @@
-# Day 4 — IAM Policy Conditions
+# 🔐 Day 4 — IAM Policy Conditions
 
 ## 📌 Overview
 
@@ -63,7 +63,7 @@ day4-test.txt
 sushma-day4-policy-conditions-2026
 ```
 
-Region:
+**Region:**
 
 ```text
 ap-south-1
@@ -75,7 +75,7 @@ ap-south-1
 day4-policy-test-user
 ```
 
-Console access:
+**Console access:**
 
 ```text
 Disabled
@@ -110,9 +110,9 @@ Day4-S3-Region-Condition-Policy
 }
 ```
 
-### Policy Breakdown
+## Policy Breakdown
 
-**Action:**
+### Action
 
 ```text
 s3:GetObject
@@ -120,7 +120,7 @@ s3:GetObject
 
 Allows the user to read/download objects.
 
-**Resource:**
+### Resource
 
 ```text
 arn:aws:s3:::sushma-day4-policy-conditions-2026/*
@@ -128,7 +128,7 @@ arn:aws:s3:::sushma-day4-policy-conditions-2026/*
 
 Applies to objects inside the specific S3 bucket.
 
-**Condition:**
+### Condition
 
 ```text
 aws:RequestedRegion = ap-south-1
@@ -174,6 +174,8 @@ The result confirmed that the CLI was using:
 day4-policy-test-user
 ```
 
+This verified that the Day 4 IAM user's credentials were being used.
+
 ---
 
 # 📄 Created Test File
@@ -218,7 +220,7 @@ The user was not authorized to perform:
 s3:ListBucket
 ```
 
-### Reason
+## Reason
 
 The custom policy does not grant:
 
@@ -349,7 +351,11 @@ s3:ListBucket
 
 ### Cause
 
-The policy does not include `s3:ListBucket`.
+The policy does not include:
+
+```text
+s3:ListBucket
+```
 
 ### Result
 
@@ -373,7 +379,7 @@ The command used the default AWS CLI credentials instead of the Day 4 profile.
 
 Use:
 
-```bash
+```text
 --profile day4
 ```
 
@@ -387,12 +393,9 @@ aws sts get-caller-identity --profile day4
 
 # 📸 Screenshot
 
-The Day 4 lab screenshot demonstrates the complete Terminal testing flow:
+The Day 4 lab screenshot demonstrates the complete Terminal testing flow.
 
-```text
-screenshots/
-└── 01-policy-condition-terminal-test.png
-```
+![Day 4 IAM Policy Conditions Terminal Test](./screenshots/01-policy-condition-terminal-test.png)
 
 The screenshot shows:
 
@@ -407,7 +410,7 @@ The screenshot shows:
 
 Day 4 demonstrated how an IAM policy can use a **Condition** to make permissions more specific.
 
-The lab showed that:
+The lab showed:
 
 ```text
 IAM User
@@ -422,4 +425,18 @@ Condition
 ```
 
 The user was allowed to retrieve the specific S3 object while being denied permission to list the bucket.
+
+---
+
+## ⭐ Key Takeaways
+
+* IAM Conditions add additional restrictions to permissions.
+* `aws:RequestedRegion` can be used to restrict requests based on AWS Region.
+* `s3:GetObject` allows reading an object.
+* `s3:ListBucket` is a separate permission.
+* An IAM policy can allow one action while denying another simply by not granting it.
+* AWS CLI profiles help use different AWS credentials safely.
+* `aws sts get-caller-identity` is useful for verifying which identity is being used.
+* Least-privilege permissions should be preferred.
+* `AccessDenied` should be investigated by checking the identity, action, resource, policy, and conditions.
 
