@@ -57,7 +57,7 @@ Region Code: ap-south-1
 
 I explored the customer-managed key creation workflow.
 
-The configuration used for the lab was:
+The configuration reviewed for the lab was:
 
 ```text
 Key Type:
@@ -79,6 +79,8 @@ Description:
 Day 7 KMS encryption and decryption lab
 ```
 
+> **Note:** The customer-managed KMS key was not created. The configuration was reviewed during the key creation workflow as part of a cost-safe learning lab.
+
 ---
 
 # 👤 Key Administrator
@@ -89,7 +91,7 @@ The IAM user:
 sushma
 ```
 
-was selected as the key administrator.
+was selected as the key administrator during the configuration review.
 
 A key administrator can perform management operations on the KMS key, such as:
 
@@ -109,7 +111,7 @@ The IAM user:
 sushma
 ```
 
-was also selected as the key user.
+was also selected as the key user during the configuration review.
 
 The key policy included permissions such as:
 
@@ -137,9 +139,9 @@ Uses the key for cryptographic operations
 
 # 📜 KMS Key Policy
 
-The key policy controls how the KMS key can be used.
+The KMS key policy controls how the KMS key can be used.
 
-Important permissions observed:
+Important permissions observed during the configuration review included:
 
 ```text
 kms:Encrypt
@@ -192,22 +194,26 @@ This avoided creating an unnecessary customer-managed KMS resource for a tempora
 
 # 📸 Screenshot Evidence
 
-The lab contains:
+The lab contains the following screenshot:
 
 ```text
 screenshots/
 └── 01-kms-key-configuration-review.png
 ```
 
-The screenshot shows the KMS customer-managed key configuration and review settings.
+### KMS Key Configuration Review
 
-Sensitive AWS account information should be hidden before publishing screenshots to a public GitHub repository.
+![KMS Key Configuration Review](screenshots/01-kms-key-configuration-review.png)
+
+The screenshot shows the KMS customer-managed key configuration and review settings explored during the lab.
+
+> **Security Note:** Sensitive AWS account information should be hidden before publishing screenshots to a public GitHub repository.
 
 ---
 
 # 🧠 Key Concepts Learned
 
-### Encryption
+## Encryption
 
 Encryption converts readable data into protected data.
 
@@ -219,7 +225,7 @@ Encryption
 Ciphertext
 ```
 
-### Decryption
+## Decryption
 
 Decryption converts protected data back into readable data when an authorized identity has permission.
 
@@ -231,7 +237,7 @@ Decryption
 Plaintext
 ```
 
-### Symmetric Key
+## Symmetric Key
 
 A symmetric KMS key uses the same cryptographic key for encryption and decryption operations.
 
@@ -249,6 +255,30 @@ Answer:
 
 ---
 
+# 🎯 What I Practiced
+
+```text
+AWS KMS
+   ↓
+Customer-managed key workflow
+   ↓
+Symmetric key
+   ↓
+Encrypt & decrypt usage
+   ↓
+Key administrator
+   ↓
+Key user
+   ↓
+Key policy
+   ↓
+AWS-managed keys
+   ↓
+Cost-safe AWS lab
+```
+
+---
+
 # ✅ Day 7 Status
 
 * KMS opened in Mumbai region
@@ -260,4 +290,5 @@ Answer:
 * AWS-managed keys examined
 * KMS screenshot captured
 * Customer-managed key was not created to avoid unnecessary lab costs
+* Screenshot linked directly in this README
 
